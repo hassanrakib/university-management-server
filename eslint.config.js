@@ -13,11 +13,15 @@ module.exports = [
 
     {
         rules: {
-            'no-unused-vars': 'error',
             'no-console': 'warn',
             'no-unused-expressions': 'error',
             'prefer-const': 'error',
             'no-undef': 'error',
+            'no-unused-vars': 'off',
+            '@typescript-eslint/no-unused-vars': [
+                'error',
+                { argsIgnorePattern: '^_' },
+            ],
         },
     },
     eslintConfigPrettier,

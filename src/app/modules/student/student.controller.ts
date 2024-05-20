@@ -3,7 +3,7 @@ import { StudentServices } from './student.service';
 
 const createStudent = async (req: Request, res: Response) => {
     try {
-        const student = req.body;
+        const { student } = req.body;
 
         // send response
         const insertedStudent =
@@ -19,4 +19,14 @@ const createStudent = async (req: Request, res: Response) => {
     }
 };
 
-export const StudentControllers = { createStudent };
+const fetchStudent = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const studentData = await StudentServices.getStudent(id);
+        res.status(200).json({ data: studentData });
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+export const StudentControllers = { createStudent, fetchStudent };
