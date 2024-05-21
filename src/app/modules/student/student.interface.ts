@@ -1,4 +1,6 @@
-export type Guardian = {
+import { Model } from 'mongoose';
+
+export type TGuardian = {
     fatherName: string;
     fatherOccupation: string;
     fatherContactNo: string;
@@ -7,20 +9,20 @@ export type Guardian = {
     motherContactNo: string;
 };
 
-export type Name = {
+export type TName = {
     firstName: string;
-    middleName: string;
+    middleName?: string;
     lastName: string;
 };
 
-export type LocalGuardian = {
+export type TLocalGuardian = {
     name: string;
     occupation: string;
     contactNo: string;
     address: string;
 };
 
-export enum BloodGroup {
+export enum TBloodGroup {
     'A+' = 'A+',
     'A-' = 'A-',
     'B+' = 'B+',
@@ -31,19 +33,35 @@ export enum BloodGroup {
     'O-' = 'O-',
 }
 
-export default interface Student {
+export default interface TStudent {
     id: string;
-    name: Name;
+    password: string;
+    name: TName;
     gender: 'male' | 'female';
-    dateOfBirth: string;
+    dateOfBirth?: string;
     email: string;
     contactNo: string;
     emergencyContactNo: string;
-    bloodGroup?: BloodGroup;
+    bloodGroup?: TBloodGroup;
     presentAddress: string;
     permanentAddress: string;
-    guardian: Guardian;
-    localGuardian: LocalGuardian;
+    guardian: TGuardian;
+    localGuardian: TLocalGuardian;
     profileImg?: string;
     isActive: 'active' | 'blocked';
+    isDeleted: boolean;
+}
+
+// for creating instance method for Student Model
+
+// export interface StudentMethods {
+//     isStudentExist(id: string): Promise<TStudent | null>;
+// }
+
+// export type StudentModel = Model<TStudent, {}, StudentMethods>;
+
+// for creating static method of Student Model
+
+export interface StudentModel extends Model<TStudent> {
+    isStudentExist(id: string): Promise<TStudent | null>;
 }
