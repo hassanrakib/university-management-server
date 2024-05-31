@@ -38,10 +38,6 @@ const LocalGuardianSchema = z.object({
 
 // Define a schema for student validation
 const StudentSchema = z.object({
-    id: z.string().min(1),
-    password: z
-        .string()
-        .max(20, { message: 'Password can not exceed 20 characters' }),
     name: NameSchema,
     gender: z.enum(['male', 'female']),
     dateOfBirth: z.string().optional(),
@@ -54,7 +50,6 @@ const StudentSchema = z.object({
     guardian: GuardianSchema,
     localGuardian: LocalGuardianSchema,
     profileImg: z.string().optional(),
-    isActive: z.enum(['active', 'blocked']).optional().default('active'),
     isDeleted: z.boolean(),
 });
 

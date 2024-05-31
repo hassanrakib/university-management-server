@@ -7,8 +7,6 @@ import TStudent, {
     TName,
     StudentModel,
 } from './student.interface';
-import bcrypt from 'bcrypt';
-import config from '../../config';
 
 const nameSchema = new Schema<TName>({
     firstName: {
@@ -85,10 +83,11 @@ const studentSchema = new Schema<TStudent, StudentModel>(
             required: [true, 'student.id is required'],
             unique: true,
         },
-        password: {
-            type: String,
-            required: [true, 'student.password is required'],
-            maxlength: [20, 'Password cannot exceed 20 characters'],
+        user: {
+            type: Schema.Types.ObjectId,
+            required: true,
+            unique: true,
+            ref: 'User',
         },
         name: {
             type: nameSchema,
@@ -143,11 +142,6 @@ const studentSchema = new Schema<TStudent, StudentModel>(
             required: [true, 'student.localGuardian is required'],
         },
         profileImg: { type: String },
-        isActive: {
-            type: String,
-            enum: ['active', 'blocked'],
-            default: 'active',
-        },
         isDeleted: { type: Boolean, required: true, default: false },
     },
     {
@@ -170,25 +164,6 @@ studentSchema.methods.isStudentExist = async function (id: string) {
 studentSchema.statics.isStudentExist = async function (id: string) {
     return await Student.findOne({ id });
 };
-
-// mongoose middleware for documents
-studentSchema.pre('save', async function (next) {
-    // console.log(this, 'We will save a data');
-
-    // password hashing before saving
-    this.password = await bcrypt.hash(
-        this.password,
-        Number(config.bcrypt_salt_rounds)
-    );
-
-    next();
-});
-
-studentSchema.post('save', function (doc, next) {
-    doc.password = '';
-
-    next();
-});
 
 studentSchema.pre('findOne', function (next) {
     // filter out the document that is deleted

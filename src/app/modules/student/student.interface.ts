@@ -1,4 +1,4 @@
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 export type TGuardian = {
     fatherName: string;
@@ -35,7 +35,7 @@ export enum TBloodGroup {
 
 export default interface TStudent {
     id: string;
-    password: string;
+    user: Types.ObjectId;
     name: TName;
     gender: 'male' | 'female';
     dateOfBirth?: string;
@@ -48,7 +48,6 @@ export default interface TStudent {
     guardian: TGuardian;
     localGuardian: TLocalGuardian;
     profileImg?: string;
-    isActive: 'active' | 'blocked';
     isDeleted: boolean;
 }
 
