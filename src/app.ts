@@ -1,8 +1,8 @@
 import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
-import { StudentRoutes } from './app/modules/student/student.route';
-import { UserRoutes } from './app/modules/user/user.route';
 import globalError from './app/middlewares/global-error';
+import notFound from './app/middlewares/not-found';
+import { router } from './app/routes';
 const app: Application = express();
 
 app.use(express.json());
@@ -12,11 +12,13 @@ app.get('/', (req: Request, res: Response) => {
     res.send('Hello World!');
 });
 
-app.use('/api/v1/users', UserRoutes);
-
-app.use('/api/v1/students', StudentRoutes);
+// app routes
+app.use('/api/v1', router);
 
 // global error handler
 app.use(globalError);
+
+// not found routes
+app.all('*', notFound);
 
 export default app;

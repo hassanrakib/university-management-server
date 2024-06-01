@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { StudentServices } from './student.service';
+import sendResponse from '../../utils/send-response';
+import httpStatus from 'http-status';
 
 const fetchStudent = async (
     req: Request,
@@ -9,7 +11,12 @@ const fetchStudent = async (
     try {
         const { id } = req.params;
         const studentData = await StudentServices.getStudent(id);
-        res.status(200).json({ data: studentData });
+        sendResponse(res, {
+            statusCode: httpStatus.OK,
+            success: true,
+            message: httpStatus[200],
+            data: studentData,
+        });
     } catch (err: unknown) {
         next(err);
     }
@@ -23,7 +30,12 @@ const deleteStudent = async (
     try {
         const { id } = req.params;
         const deletedData = await StudentServices.markStudentDeleted(id);
-        res.status(200).json({ data: deletedData });
+        sendResponse(res, {
+            statusCode: httpStatus.OK,
+            success: true,
+            message: httpStatus[200],
+            data: deletedData,
+        });
     } catch (err) {
         next(err);
     }

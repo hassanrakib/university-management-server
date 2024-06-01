@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { UserServices } from './user.service';
+import sendResponse from '../../utils/send-response';
+import httpStatus from 'http-status';
 
 const createStudent = async (
     req: Request,
@@ -15,9 +17,10 @@ const createStudent = async (
             studentData
         );
 
-        res.status(200).json({
+        sendResponse(res, {
+            statusCode: httpStatus.OK,
             success: true,
-            message: 'successfully inserted',
+            message: httpStatus[200],
             data: insertedStudent,
         });
     } catch (err: unknown) {
