@@ -3,13 +3,16 @@ import cors from 'cors';
 import globalError from './app/middlewares/global-error';
 import notFound from './app/middlewares/not-found';
 import { router } from './app/routes';
+import httpStatus from 'http-status';
+
 const app: Application = express();
 
+// middlewares
 app.use(express.json());
 app.use(cors());
 
 app.get('/', (req: Request, res: Response) => {
-    res.send('Hello World!');
+    res.json({ status: httpStatus[200], message: 'Server is running!' });
 });
 
 // app routes

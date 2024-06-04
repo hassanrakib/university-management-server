@@ -37,20 +37,26 @@ const LocalGuardianSchema = z.object({
 });
 
 // Define a schema for student validation
-const StudentSchema = z.object({
-    name: NameSchema,
-    gender: z.enum(['male', 'female']),
-    dateOfBirth: z.string().optional(),
-    email: z.string().email(),
-    contactNo: z.string().min(1),
-    emergencyContactNo: z.string().min(1),
-    bloodGroup: z.nativeEnum(TBloodGroup),
-    presentAddress: z.string().min(1),
-    permanentAddress: z.string().min(1),
-    guardian: GuardianSchema,
-    localGuardian: LocalGuardianSchema,
-    profileImg: z.string().optional(),
-    isDeleted: z.boolean(),
+const CreateStudentSchema = z.object({
+    body: z.object({
+        password: z.string().max(20),
+        student: z.object({
+            name: NameSchema,
+            gender: z.enum(['male', 'female']),
+            dateOfBirth: z.string().optional(),
+            email: z.string().email(),
+            contactNo: z.string().min(1),
+            emergencyContactNo: z.string().min(1),
+            bloodGroup: z.nativeEnum(TBloodGroup).optional(),
+            presentAddress: z.string().min(1),
+            permanentAddress: z.string().min(1),
+            guardian: GuardianSchema,
+            localGuardian: LocalGuardianSchema,
+            profileImg: z.string().optional(),
+        }),
+    }),
 });
 
-export default StudentSchema;
+export const studentValidations = {
+    CreateStudentSchema,
+};

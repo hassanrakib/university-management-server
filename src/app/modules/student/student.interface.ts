@@ -48,7 +48,6 @@ export default interface TStudent {
     guardian: TGuardian;
     localGuardian: TLocalGuardian;
     profileImg?: string;
-    isDeleted: boolean;
 }
 
 // for creating instance method for Student Model
