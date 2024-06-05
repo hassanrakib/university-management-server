@@ -38,7 +38,7 @@ export default interface TStudent {
     user: Types.ObjectId;
     name: TName;
     gender: 'male' | 'female';
-    dateOfBirth?: string;
+    dateOfBirth?: Date;
     email: string;
     contactNo: string;
     emergencyContactNo: string;
