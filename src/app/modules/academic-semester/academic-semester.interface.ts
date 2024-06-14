@@ -32,3 +32,7 @@ export interface TAcademicSemester {
     startMonth: TSemesterMonths;
     endMonth: TSemesterMonths;
 }
+
+export type TSemesterNameCodeMapper = {
+    [key: string]: string;
+};
