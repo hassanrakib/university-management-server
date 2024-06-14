@@ -15,6 +15,17 @@ const CreateAcademicSemesterSchema = z.object({
     }),
 });
 
+const UpdateAcademicSemesterSchema = z.object({
+    body: z.object({
+        name: z.nativeEnum(TSemesterNames).optional(),
+        code: z.nativeEnum(TSemesterCodes).optional(),
+        year: z.string().optional(),
+        startMonth: z.nativeEnum(TSemesterMonths).optional(),
+        endMonth: z.nativeEnum(TSemesterMonths).optional(),
+    }),
+});
+
 export const AcademicSemesterValidations = {
     CreateAcademicSemesterSchema,
+    UpdateAcademicSemesterSchema,
 };
