@@ -1,12 +1,21 @@
 import config from '../../config';
+import { AcademicSemester } from '../academic-semester/academic-semester.model';
 import TStudent from '../student/student.interface';
 import { Student } from '../student/student.model';
 import TUser from './user.interface';
 import { User } from './user.model';
+import { generateStudentId } from './user.utils';
 
 async function insertStudentToDb(password: string, studentData: TStudent) {
+    // find academic semester by its id given in the studentData.admissionSemester
+    const academicSemester = await AcademicSemester.findById(
+        studentData.admissionSemester
+    );
+
+    if (!academicSemester) throw new Error('Academic Semester not found!');
+
     // generate id
-    const id: string = '2024001';
+    const id: string = generateStudentId(academicSemester);
 
     let user: TUser = {
         id,

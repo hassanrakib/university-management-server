@@ -38,7 +38,7 @@ export default interface TStudent {
     user: Types.ObjectId;
     name: TName;
     gender: 'male' | 'female';
-    dateOfBirth?: Date;
+    dateOfBirth?: string;
     email: string;
     contactNo: string;
     emergencyContactNo: string;
@@ -48,6 +48,7 @@ export default interface TStudent {
     guardian: TGuardian;
     localGuardian: TLocalGuardian;
     profileImg?: string;
+    admissionSemester: Types.ObjectId;
 }
 
 // for creating instance method for Student Model

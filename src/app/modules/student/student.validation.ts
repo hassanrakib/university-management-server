@@ -43,7 +43,7 @@ const CreateStudentSchema = z.object({
         student: z.object({
             name: NameSchema,
             gender: z.enum(['male', 'female']),
-            dateOfBirth: z.date().optional(),
+            dateOfBirth: z.string().optional(),
             email: z.string().email(),
             contactNo: z.string().min(1),
             emergencyContactNo: z.string().min(1),
@@ -53,6 +53,7 @@ const CreateStudentSchema = z.object({
             guardian: GuardianSchema,
             localGuardian: LocalGuardianSchema,
             profileImg: z.string().optional(),
+            admissionSemester: z.string(),
         }),
     }),
 });
