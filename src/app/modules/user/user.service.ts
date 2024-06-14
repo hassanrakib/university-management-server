@@ -15,7 +15,7 @@ async function insertStudentToDb(password: string, studentData: TStudent) {
     if (!academicSemester) throw new Error('Academic Semester not found!');
 
     // generate id
-    const id: string = generateStudentId(academicSemester);
+    const id: string = await generateStudentId(academicSemester);
 
     let user: TUser = {
         id,
