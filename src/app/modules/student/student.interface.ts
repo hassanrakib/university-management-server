@@ -49,6 +49,8 @@ export default interface TStudent {
     localGuardian: TLocalGuardian;
     profileImg?: string;
     admissionSemester: Types.ObjectId;
+    academicDepartment: Types.ObjectId;
+    isDeleted?: boolean;
 }
 
 // for creating instance method for Student Model

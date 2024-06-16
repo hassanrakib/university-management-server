@@ -2,6 +2,8 @@ import { Types } from 'mongoose';
 import { semesterNameCodeMapper } from './academic-semester.constant';
 import { TAcademicSemester } from './academic-semester.interface';
 import { AcademicSemester } from './academic-semester.model';
+import AppError from '../../errors/AppError';
+import httpStatus from 'http-status';
 
 const createAcademicSemesterIntoDB = async (
     academicSemester: TAcademicSemester
@@ -10,7 +12,7 @@ const createAcademicSemesterIntoDB = async (
     if (
         semesterNameCodeMapper[academicSemester.name] !== academicSemester.code
     ) {
-        throw new Error('Invalid Semester Code!');
+        throw new AppError(httpStatus.BAD_REQUEST, 'Invalid Semester Code!');
     }
 
     return await AcademicSemester.create(academicSemester);
@@ -33,7 +35,10 @@ const updateAcademicSemesterByIdInDB = async (
         semesterDocPart.name &&
         semesterNameCodeMapper[semesterDocPart.name] !== semesterDocPart.code
     ) {
-        throw new Error('Invalid semester code or name');
+        throw new AppError(
+            httpStatus.BAD_REQUEST,
+            'Invalid semester code or name'
+        );
     }
     return await AcademicSemester.updateOne(
         { _id: new Types.ObjectId(semesterId) },

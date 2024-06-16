@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(cors());
 
 app.get('/', (req: Request, res: Response) => {
-    res.json({ status: httpStatus[200], message: 'Server is running!' });
+    // res.json({ status: httpStatus[200], message: 'Server is running!' });
 });
 
 // app routes
