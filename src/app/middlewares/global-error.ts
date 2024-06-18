@@ -1,19 +1,9 @@
 import { ErrorRequestHandler } from 'express';
-import { ZodError, ZodIssue } from 'zod';
+import { ZodError } from 'zod';
 import { ErrorSources } from '../interface/error';
 import config from '../config';
-
-const handleZodError = (error: ZodError) => {
-    const errorSources: ErrorSources = error.issues.map((issue: ZodIssue) => ({
-        path: issue.path[issue.path.length - 1],
-        message: issue.message,
-    }));
-    return {
-        statusCode: 400,
-        message: 'Validation error',
-        errorSources,
-    };
-};
+import handleZodError from '../errors/handleZodError';
+import handleValidationError from '../errors/handleValidationError';
 
 const globalError: ErrorRequestHandler = (error, req, res, next) => {
     // setting default values
@@ -28,12 +18,17 @@ const globalError: ErrorRequestHandler = (error, req, res, next) => {
     ];
 
     if (error instanceof ZodError) {
-        const simplifiedError = handleZodError(error);
+        const simplifiedZodError = handleZodError(error);
 
         // override default values
-        statusCode = simplifiedError.statusCode;
-        message = simplifiedError.message;
-        errorSources = simplifiedError.errorSources;
+        statusCode = simplifiedZodError.statusCode;
+        message = simplifiedZodError.message;
+        errorSources = simplifiedZodError.errorSources;
+    } else if (error.name === 'ValidationError') {
+        const simplifiedMongooseError = handleValidationError(error);
+        statusCode = simplifiedMongooseError.statusCode;
+        message = simplifiedMongooseError.message;
+        errorSources = simplifiedMongooseError.errorSources;
     }
 
     res.status(statusCode).json({
