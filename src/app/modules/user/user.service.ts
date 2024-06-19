@@ -8,6 +8,8 @@ import TUser from './user.interface';
 import { User } from './user.model';
 import { generateStudentId } from './user.utils';
 import mongoose from 'mongoose';
+import TFaculty from '../faculty/faculty.interface';
+import { Faculty } from '../faculty/faculty.model';
 
 async function insertStudentToDb(password: string, studentData: TStudent) {
     // find academic semester by its id given in the studentData.admissionSemester
@@ -69,6 +71,32 @@ async function insertStudentToDb(password: string, studentData: TStudent) {
     }
 }
 
+const insertFacultyToDB = async (password: string, facultyData: TFaculty) => {
+    const isAcademicDepartmentExist = await Faculty.findById(
+        facultyData.academicDepartment
+    );
+    if (!isAcademicDepartmentExist) {
+        throw new AppError(
+            httpStatus.BAD_REQUEST,
+            'Academic department does not exist!'
+        );
+    }
+
+    const session = await mongoose.startSession();
+    try {
+        session.startTransaction();
+
+        const id = generateFacultyId();
+
+        const user: TUser = {
+            id: '2222',
+            password: password || (config.default_password as string),
+            role: 'faculty',
+        };
+    } catch (error) {}
+};
+
 export const UserServices = {
     insertStudentToDb,
+    insertFacultyToDB,
 };

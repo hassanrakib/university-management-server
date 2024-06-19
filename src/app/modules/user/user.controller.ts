@@ -15,8 +15,25 @@ const createStudent = catchAsync(async (req, res, next) => {
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: httpStatus[200],
+        message: 'Student created successfully',
         data: insertedStudent,
+    });
+});
+
+const createFaculty = catchAsync(async (req, res, next) => {
+    const { password, faculty: facultyData } = req.body;
+
+    // send req to the service
+    const insertedFaculty = UserServices.insertFacultyToDB(
+        password,
+        facultyData
+    );
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Faculty created successfully',
+        data: insertedFaculty,
     });
 });
 
