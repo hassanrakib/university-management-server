@@ -4,6 +4,8 @@ import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import { User } from '../user/user.model';
 import TStudent from './student.interface';
+import QueryBuilder from '../../builder/QueryBuilder';
+import { studentSearchableFields } from './student.constant';
 
 async function getAStudentById(id: string) {
     return await Student.findOne({ id })
@@ -17,7 +19,7 @@ async function getAStudentById(id: string) {
 }
 
 async function getAllStudents(query: Record<string, unknown>) {
-    // search functionality
+    /* // search functionality
     const searchTerm = query.searchTerm || '';
     const studentSearchableFields = [
         'email',
@@ -67,7 +69,26 @@ async function getAllStudents(query: Record<string, unknown>) {
 
     const fieldLimitingQuery = await paginateQuery.select(fields);
 
-    return fieldLimitingQuery;
+    return fieldLimitingQuery; */
+
+    // class implementation (recommended)
+
+    const studentQuery = new QueryBuilder(Student.find(), query)
+        .search(studentSearchableFields)
+        .filter()
+        .sort()
+        .paginate()
+        .fields();
+
+    const result = await studentQuery.modelQuery
+        .populate('admissionSemester')
+        .populate({
+            path: 'academicDepartment',
+            populate: {
+                path: 'academicFaculty',
+            },
+        });
+    return result;
 }
 
 async function updateAStudentById(
