@@ -17,19 +17,57 @@ async function getAStudentById(id: string) {
 }
 
 async function getAllStudents(query: Record<string, unknown>) {
+    // search functionality
     const searchTerm = query.searchTerm || '';
     const studentSearchableFields = [
         'email',
         'name.firstName',
         'presentAddress',
     ];
-    return await Student.find({
+    const searchQuery = Student.find({
         $or: studentSearchableFields.map((field) => ({
             [field]: { $regex: searchTerm, $options: 'i' },
         })),
-    })
+    });
+
+    // filter functionality
+
+    // copy query obj to mutate
+    const filter = { ...query };
+    const excludedFields = ['searchTerm', 'sort', 'limit', 'page', 'fields'];
+
+    excludedFields.forEach((field) => delete filter[field]);
+
+    const filterQuery = searchQuery
+        .find(filter)
         .populate('admissionSemester')
         .populate('academicDepartment');
+
+    // sort functionality
+    const sort: string = (query.sort as string) || '-createdAt';
+
+    const sortQuery = filterQuery.sort(sort);
+
+    // pagination functionality
+    const page = Number(query.page as string) || 1;
+    const limit = Number(query.limit as string) || 10;
+    const skip = (page - 1) * limit;
+    // skip
+    const paginateQuery = sortQuery.skip(skip);
+
+    // limit
+    const limitQuery = paginateQuery.limit(limit);
+
+    // field limiting
+
+    // make an array of field names by splitting them using comma
+    // then join the array elements using space
+    // so that it looks like 'name email'
+    const fields = (query.fields as string)?.split(',').join(' ') || '';
+
+    const fieldLimitingQuery = await paginateQuery.select(fields);
+
+    return fieldLimitingQuery;
 }
 
 async function updateAStudentById(
