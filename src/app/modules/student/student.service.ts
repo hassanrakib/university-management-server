@@ -16,8 +16,18 @@ async function getAStudentById(id: string) {
         });
 }
 
-async function getAllStudents() {
-    return await Student.find()
+async function getAllStudents(query: Record<string, unknown>) {
+    const searchTerm = query.searchTerm || '';
+    const studentSearchableFields = [
+        'email',
+        'name.firstName',
+        'presentAddress',
+    ];
+    return await Student.find({
+        $or: studentSearchableFields.map((field) => ({
+            [field]: { $regex: searchTerm, $options: 'i' },
+        })),
+    })
         .populate('admissionSemester')
         .populate('academicDepartment');
 }
