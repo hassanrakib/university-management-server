@@ -6,11 +6,12 @@ import handleZodError from '../errors/handleZodError';
 import handleValidationError from '../errors/handleValidationError';
 import handleCastError from '../errors/handleCastError';
 import handleDuplicateValueError from '../errors/handleDuplicateValueError';
+import AppError from '../errors/AppError';
 
 const globalError: ErrorRequestHandler = (error, req, res, next) => {
     // setting default values
-    let statusCode = error.statusCode || 500;
-    let message = error.message || 'Something went wrong!';
+    let statusCode = 500;
+    let message = 'Something went wrong!';
 
     let errorSources: ErrorSources = [
         {
@@ -41,6 +42,23 @@ const globalError: ErrorRequestHandler = (error, req, res, next) => {
         statusCode = simplifiedMongoose11000Error.statusCode;
         message = simplifiedMongoose11000Error.message;
         errorSources = simplifiedMongoose11000Error.errorSources;
+    } else if (error instanceof AppError) {
+        statusCode = error.statusCode;
+        message = error.message;
+        errorSources = [
+            {
+                path: '',
+                message: error.message,
+            },
+        ];
+    } else if (error instanceof Error) {
+        message = error.message;
+        errorSources = [
+            {
+                path: '',
+                message: error.message,
+            },
+        ];
     }
 
     res.status(statusCode).json({
