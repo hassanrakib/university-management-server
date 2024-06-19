@@ -4,6 +4,8 @@ import { ErrorSources } from '../interface/error';
 import config from '../config';
 import handleZodError from '../errors/handleZodError';
 import handleValidationError from '../errors/handleValidationError';
+import handleCastError from '../errors/handleCastError';
+import handleDuplicateValueError from '../errors/handleDuplicateValueError';
 
 const globalError: ErrorRequestHandler = (error, req, res, next) => {
     // setting default values
@@ -29,6 +31,16 @@ const globalError: ErrorRequestHandler = (error, req, res, next) => {
         statusCode = simplifiedMongooseError.statusCode;
         message = simplifiedMongooseError.message;
         errorSources = simplifiedMongooseError.errorSources;
+    } else if (error.name === 'CastError') {
+        const simplifiedMongooseCastError = handleCastError(error);
+        statusCode = simplifiedMongooseCastError.statusCode;
+        message = simplifiedMongooseCastError.message;
+        errorSources = simplifiedMongooseCastError.errorSources;
+    } else if (error.code === 11000) {
+        const simplifiedMongoose11000Error = handleDuplicateValueError(error);
+        statusCode = simplifiedMongoose11000Error.statusCode;
+        message = simplifiedMongoose11000Error.message;
+        errorSources = simplifiedMongoose11000Error.errorSources;
     }
 
     res.status(statusCode).json({
@@ -36,6 +48,7 @@ const globalError: ErrorRequestHandler = (error, req, res, next) => {
         message,
         errorSources,
         stack: config.NODE_ENV === 'development' ? error.stack : null,
+        error,
     });
 };
 

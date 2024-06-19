@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
-import { ErrorSources, LibraryErrorHandlerReturn } from '../interface/error';
+import { ErrorSources, GenericErrorResponse } from '../interface/error';
 
 const handleValidationError = (
     err: mongoose.Error.ValidationError
-): LibraryErrorHandlerReturn => {
+): GenericErrorResponse => {
     const errorSources: ErrorSources = Object.values(err.errors).map((err) => ({
         path: err.path,
         message: err.message,
