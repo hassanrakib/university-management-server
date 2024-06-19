@@ -11,8 +11,10 @@ const app: Application = express();
 app.use(express.json());
 app.use(cors());
 
-app.get('/', (req: Request, res: Response) => {
-    // res.json({ status: httpStatus[200], message: 'Server is running!' });
+app.get('/', async (req: Request, res: Response) => {
+    // following code produces unhandledRejection
+    // Promise.reject();
+    res.json({ status: httpStatus[200], message: 'Server is running!' });
 });
 
 // app routes
