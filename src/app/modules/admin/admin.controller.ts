@@ -27,7 +27,7 @@ const getAdminById = catchAsync(async (req, res, next) => {
 
 const updateAdminById = catchAsync(async (req, res, next) => {
     const result = await AdminServices.updateAdminByIdInDB(
-        req.params.adminid,
+        req.params.adminId,
         req.body
     );
 

@@ -20,10 +20,9 @@ const fetchFacultiesFromDB = async (query: Record<string, unknown>) => {
 };
 
 const fetchFacultyByIdFromDB = async (facultyId: string) => {
-    return await Faculty.findOne({ id: facultyId }).populate(
-        'academicDepartment',
-        'academicFaculty'
-    );
+    return await Faculty.findOne({ id: facultyId })
+        .populate('academicDepartment')
+        .populate('academicFaculty');
 };
 
 const updateFacultyByIdInDB = async (

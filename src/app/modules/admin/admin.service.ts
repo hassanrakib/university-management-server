@@ -5,6 +5,7 @@ import { Admin } from './admin.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import { User } from '../user/user.model';
+import { adminSearchableFields } from './admin.constant';
 
 const fetchAdminsFromDB = async (query: Record<string, unknown>) => {
     const adminQuery = new QueryBuilder(Admin.find(), query)
