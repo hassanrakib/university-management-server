@@ -6,10 +6,16 @@ import TStudent from '../student/student.interface';
 import { Student } from '../student/student.model';
 import TUser from './user.interface';
 import { User } from './user.model';
-import { generateStudentId } from './user.utils';
+import {
+    generateAdminId,
+    generateFacultyId,
+    generateStudentId,
+} from './user.utils';
 import mongoose from 'mongoose';
 import TFaculty from '../faculty/faculty.interface';
 import { Faculty } from '../faculty/faculty.model';
+import TAdmin from '../admin/admin.interface';
+import { Admin } from '../admin/admin.model';
 
 async function insertStudentToDb(password: string, studentData: TStudent) {
     // find academic semester by its id given in the studentData.admissionSemester
@@ -86,17 +92,102 @@ const insertFacultyToDB = async (password: string, facultyData: TFaculty) => {
     try {
         session.startTransaction();
 
-        const id = generateFacultyId();
+        const id = await generateFacultyId();
 
         const user: TUser = {
-            id: '2222',
+            id,
             password: password || (config.default_password as string),
             role: 'faculty',
         };
-    } catch (error) {}
+
+        const newUser = await User.create([user], { session });
+
+        if (!newUser.length) {
+            throw new AppError(httpStatus.BAD_REQUEST, 'User creation failed');
+        }
+
+        const faculty = {
+            ...facultyData,
+            id: newUser[0].id,
+            user: newUser[0]._id,
+        };
+
+        const newFaculty = await Faculty.create([faculty], { session });
+
+        if (!newFaculty.length) {
+            throw new AppError(
+                httpStatus.BAD_REQUEST,
+                'Faculty creation failed'
+            );
+        }
+
+        session.commitTransaction();
+        session.endSession();
+
+        return newFaculty[0];
+    } catch (error) {
+        session.abortTransaction();
+        session.endSession();
+
+        throw error;
+    }
+};
+
+const insertAdminToDB = async (password: string, adminData: TAdmin) => {
+    const isAcademicDepartmentExist = await Faculty.findById(
+        adminData.managementDepartment
+    );
+    if (!isAcademicDepartmentExist) {
+        throw new AppError(
+            httpStatus.BAD_REQUEST,
+            'Academic department does not exist!'
+        );
+    }
+
+    const session = await mongoose.startSession();
+    try {
+        session.startTransaction();
+
+        const id = await generateAdminId();
+
+        const user: TUser = {
+            id,
+            password: password || (config.default_password as string),
+            role: 'admin',
+        };
+
+        const newUser = await User.create([user], { session });
+
+        if (!newUser.length) {
+            throw new AppError(httpStatus.BAD_REQUEST, 'User creation failed');
+        }
+
+        const faculty = {
+            ...adminData,
+            id: newUser[0].id,
+            user: newUser[0]._id,
+        };
+
+        const newAdmin = await Admin.create([faculty], { session });
+
+        if (!newAdmin.length) {
+            throw new AppError(httpStatus.BAD_REQUEST, 'Admin creation failed');
+        }
+
+        session.commitTransaction();
+        session.endSession();
+
+        return newAdmin[0];
+    } catch (error) {
+        session.abortTransaction();
+        session.endSession();
+
+        throw error;
+    }
 };
 
 export const UserServices = {
     insertStudentToDb,
     insertFacultyToDB,
+    insertAdminToDB,
 };

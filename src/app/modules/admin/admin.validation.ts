@@ -1,19 +1,19 @@
 import { z } from 'zod';
 
-const createFacultyNameSchema = z.object({
+const createAdminNameSchema = z.object({
     firstName: z.string().min(1, { message: 'First name is required' }),
     middleName: z.string().optional(),
     lastName: z.string().min(1, { message: 'Last name is required' }),
 });
 
-const createFacultySchema = z.object({
+const createAdminSchema = z.object({
     body: z.object({
         password: z.string(),
-        faculty: z.object({
+        admin: z.object({
             designation: z
                 .string()
                 .min(1, { message: 'Designation is required' }),
-            name: createFacultyNameSchema,
+            name: createAdminNameSchema,
             gender: z.enum(['male', 'female'], {
                 required_error: 'Gender is required',
             }),
@@ -31,10 +31,7 @@ const createFacultySchema = z.object({
                 .string()
                 .min(1, { message: 'Permanent address is required' }),
             profileImg: z.string().optional(),
-            academicFaculty: z
-                .string()
-                .min(1, { message: 'Academic faculty is required' }),
-            academicDepartment: z
+            managementDepartment: z
                 .string()
                 .min(1, { message: 'Academic department is required' }),
             isDeleted: z.boolean().default(false),
@@ -42,8 +39,7 @@ const createFacultySchema = z.object({
     }),
 });
 
-// Define the TFacultyName type
-const updateFacultyNameSchema = z.object({
+const updateAdminNameSchema = z.object({
     firstName: z
         .string()
         .min(1, { message: 'First name is required' })
@@ -55,17 +51,16 @@ const updateFacultyNameSchema = z.object({
         .optional(),
 });
 
-// Define the TFaculty type
-const updateFacultySchema = z.object({
+const updateAdminSchema = z.object({
     body: z.object({
         password: z.string().optional(),
-        faculty: z
+        admin: z
             .object({
                 designation: z
                     .string()
                     .min(1, { message: 'Designation is required' })
                     .optional(),
-                name: updateFacultyNameSchema.optional(),
+                name: updateAdminNameSchema.optional(),
                 gender: z
                     .enum(['male', 'female'], {
                         required_error: 'Gender is required',
@@ -89,21 +84,17 @@ const updateFacultySchema = z.object({
                     .min(1, { message: 'Permanent address is required' })
                     .optional(),
                 profileImg: z.string().optional(),
-                academicFaculty: z
-                    .string()
-                    .min(1, { message: 'Academic faculty is required' })
-                    .optional(), // Assuming ObjectId is a string, adjust if necessary
-                academicDepartment: z
+                managementDepartment: z
                     .string()
                     .min(1, { message: 'Academic department is required' })
-                    .optional(), // Assuming ObjectId is a string, adjust if necessary
+                    .optional(),
                 isDeleted: z.boolean().default(false).optional(),
             })
             .optional(),
     }),
 });
 
-export const FacultyValidations = {
-    createFacultySchema,
-    updateFacultySchema,
+export const AdminValidations = {
+    createAdminSchema,
+    updateAdminSchema,
 };
