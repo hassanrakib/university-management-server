@@ -142,8 +142,10 @@ async function markStudentDeleted(id: string) {
             );
         }
 
+        const userId = deletedStudent.user;
+
         const deletedUser = await User.findOneAndUpdate(
-            { id },
+            { _id: userId },
             { isDeleted: true },
             { new: true, session }
         );
