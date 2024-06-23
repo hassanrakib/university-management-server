@@ -13,3 +13,9 @@ export default interface TCourse {
     preRequisiteCourses?: TPreRequisiteCourse[];
     isDeleted?: boolean;
 }
+
+// coursefaculties collection
+export interface TCourseFaculty {
+    course: Types.ObjectId;
+    faculties: Types.ObjectId[];
+}
