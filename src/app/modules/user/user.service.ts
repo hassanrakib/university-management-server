@@ -16,6 +16,7 @@ import TFaculty from '../faculty/faculty.interface';
 import { Faculty } from '../faculty/faculty.model';
 import TAdmin from '../admin/admin.interface';
 import { Admin } from '../admin/admin.model';
+import { AcademicDepartment } from '../academic-department/academic-department.model';
 
 async function insertStudentToDb(password: string, studentData: TStudent) {
     // find academic semester by its id given in the studentData.admissionSemester
@@ -78,9 +79,10 @@ async function insertStudentToDb(password: string, studentData: TStudent) {
 }
 
 const insertFacultyToDB = async (password: string, facultyData: TFaculty) => {
-    const isAcademicDepartmentExist = await Faculty.findById(
+    const isAcademicDepartmentExist = await AcademicDepartment.findById(
         facultyData.academicDepartment
     );
+
     if (!isAcademicDepartmentExist) {
         throw new AppError(
             httpStatus.BAD_REQUEST,
@@ -121,13 +123,13 @@ const insertFacultyToDB = async (password: string, facultyData: TFaculty) => {
             );
         }
 
-        session.commitTransaction();
-        session.endSession();
+        await session.commitTransaction();
+        await session.endSession();
 
         return newFaculty[0];
     } catch (error) {
-        session.abortTransaction();
-        session.endSession();
+        await session.abortTransaction();
+        await session.endSession();
 
         throw error;
     }
@@ -174,13 +176,13 @@ const insertAdminToDB = async (password: string, adminData: TAdmin) => {
             throw new AppError(httpStatus.BAD_REQUEST, 'Admin creation failed');
         }
 
-        session.commitTransaction();
-        session.endSession();
+        await session.commitTransaction();
+        await session.endSession();
 
         return newAdmin[0];
     } catch (error) {
-        session.abortTransaction();
-        session.endSession();
+        await session.abortTransaction();
+        await session.endSession();
 
         throw error;
     }

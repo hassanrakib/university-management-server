@@ -24,7 +24,7 @@ const createFaculty = catchAsync(async (req, res, next) => {
     const { password, faculty: facultyData } = req.body;
 
     // send req to the service
-    const insertedFaculty = UserServices.insertFacultyToDB(
+    const insertedFaculty = await UserServices.insertFacultyToDB(
         password,
         facultyData
     );

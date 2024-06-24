@@ -11,10 +11,9 @@ const fetchFacultiesFromDB = async (query: Record<string, unknown>) => {
         .paginate()
         .fields();
 
-    const result = await facultyQuery.modelQuery.populate(
-        'academicDepartment',
-        'academicFaculty'
-    );
+    const result = await facultyQuery.modelQuery
+        .populate('academicDepartment')
+        .populate('academicFaculty');
 
     return result;
 };

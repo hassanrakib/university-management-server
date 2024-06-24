@@ -8,7 +8,7 @@ const createFacultyNameSchema = z.object({
 
 const createFacultySchema = z.object({
     body: z.object({
-        password: z.string(),
+        password: z.string().optional(),
         faculty: z.object({
             designation: z
                 .string()

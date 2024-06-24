@@ -17,8 +17,8 @@ async function main() {
 }
 
 // handle unhandledRejection
-process.on('unhandledRejection', () => {
-    console.log('unhandledRejection detected...');
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('unhandledRejection:', { reason }, { promise });
     // if process running in the server
     if (server) {
         server.close(() => {
@@ -31,8 +31,8 @@ process.on('unhandledRejection', () => {
 });
 
 // handle uncaughtException
-process.on('uncaughtException', () => {
-    console.log('uncaughtException detected...');
+process.on('uncaughtException', (error) => {
+    console.log('uncaughtException:', { error });
     process.exit(1);
 });
 
