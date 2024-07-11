@@ -18,7 +18,10 @@ const createSemesterRegistration = catchAsync(async (req, res) => {
 });
 
 const getAllSemesterRegistrations = catchAsync(async (req, res) => {
-  const result = await SemesterRegistrationService.getAllSemesterRegistrationsFromDB(req.query);
+    const result =
+        await SemesterRegistrationService.getAllSemesterRegistrationsFromDB(
+            req.query
+        );
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
@@ -28,18 +31,33 @@ const getAllSemesterRegistrations = catchAsync(async (req, res) => {
 });
 
 const getSemesterRegistrationById = catchAsync(async (req, res) => {
-    const {id} = req.params;
-    const result = await SemesterRegistrationService.getSemesterRegistrationByIdFromDB(id);
-      sendResponse(res, {
-          statusCode: httpStatus.OK,
-          success: true,
-          message: 'Semester Registration fetched!',
-          data: result,
-      });
-  });
+    const { id } = req.params;
+    const result =
+        await SemesterRegistrationService.getSemesterRegistrationByIdFromDB(id);
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Semester Registration fetched!',
+        data: result,
+    });
+});
+
+const updateSemesterRegistration = catchAsync(async (req, res) => {
+    const { id } = req.params;
+
+    const result = await SemesterRegistrationService.updateSemesterRegistrationIntoDB(id);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Semester Registration updated!',
+        data: result,
+    });
+});
 
 export const SemesterRegistrationController = {
     createSemesterRegistration,
     getAllSemesterRegistrations,
     getSemesterRegistrationById,
+    updateSemesterRegistration,
 };

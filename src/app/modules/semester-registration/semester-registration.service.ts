@@ -1,13 +1,29 @@
 import httpStatus from 'http-status';
 import AppError from '../../errors/AppError';
 import { AcademicSemester } from '../academic-semester/academic-semester.model';
-import { TSemesterRegistration } from './semester-registration.interface';
+import {
+    Status,
+    TSemesterRegistration,
+} from './semester-registration.interface';
 import { SemesterRegistration } from './semester-registration.model';
 import QueryBuilder from '../../builder/QueryBuilder';
 
 const createSemesterRegistrationIntoDB = async (
     semesterRegistration: TSemesterRegistration
 ) => {
+    // check if there is any semester registration of which status property set to "UPCOMING" or "ONGOING"
+    const isAnySemesterRegistrationUpcomingOrOngoing =
+        await SemesterRegistration.findOne({
+            $or: [{ status: Status.UPCOMING }, { status: Status.ONGOING }],
+        });
+
+    if (isAnySemesterRegistrationUpcomingOrOngoing) {
+        throw new AppError(
+            httpStatus.BAD_REQUEST,
+            `Already a semester is ${isAnySemesterRegistrationUpcomingOrOngoing.status}`
+        );
+    }
+
     // check if academic semester doesn't exist
     const isAcademicSemesterExist = await AcademicSemester.findById(
         semesterRegistration.academicSemester
@@ -46,18 +62,22 @@ const getAllSemesterRegistrationsFromDB = async (
         .sort()
         .paginate()
         .fields();
-    
-    const result = await semesterRegistrationQuery.modelQuery.populate("academicSemester");
+
+    const result =
+        await semesterRegistrationQuery.modelQuery.populate('academicSemester');
 
     return result;
 };
 
 const getSemesterRegistrationByIdFromDB = async (id: string) => {
     return await SemesterRegistration.findById(id);
-}
+};
+
+const updateSemesterRegistrationIntoDB = async (id: string) => {};
 
 export const SemesterRegistrationService = {
     createSemesterRegistrationIntoDB,
     getAllSemesterRegistrationsFromDB,
     getSemesterRegistrationByIdFromDB,
+    updateSemesterRegistrationIntoDB,
 };
