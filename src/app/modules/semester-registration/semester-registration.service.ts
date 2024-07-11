@@ -73,7 +73,56 @@ const getSemesterRegistrationByIdFromDB = async (id: string) => {
     return await SemesterRegistration.findById(id);
 };
 
-const updateSemesterRegistrationIntoDB = async (id: string) => {};
+const updateSemesterRegistrationIntoDB = async (
+    id: string,
+    semesterRegistrationDocPart: Partial<TSemesterRegistration>
+) => {
+    // check if semesterRegistration doesn't exist
+    const requestedSemesterRegistration =
+        await SemesterRegistration.findById(id);
+
+    if (!requestedSemesterRegistration) {
+        throw new AppError(
+            httpStatus.NOT_FOUND,
+            'This semester registration is not found!'
+        );
+    }
+
+    // if the requested semester registration's status is "ENDED", then we will not update
+
+    if (requestedSemesterRegistration?.status === Status.ENDED) {
+        throw new AppError(
+            httpStatus.BAD_REQUEST,
+            `Requested semester registration is ${requestedSemesterRegistration.status}`
+        );
+    }
+
+    // 'UPCOMING' => 'ONGOING' => 'ENDED'
+    if (
+        requestedSemesterRegistration?.status === Status.UPCOMING &&
+        semesterRegistrationDocPart.status === Status.ENDED
+    ) {
+        throw new AppError(
+            httpStatus.BAD_REQUEST,
+            'You can not change semester registration status from upcoming to ended directly'
+        );
+    }
+
+    if (
+        requestedSemesterRegistration?.status === Status.ONGOING &&
+        semesterRegistrationDocPart.status === Status.UPCOMING
+    ) {
+        throw new AppError(
+            httpStatus.BAD_REQUEST,
+            'You can not change semester registration status from ongoing to upcoming'
+        );
+    }
+
+    return await SemesterRegistration.findByIdAndUpdate(id, semesterRegistrationDocPart, {
+        new: true,
+        runValidators: true,
+    });
+};
 
 export const SemesterRegistrationService = {
     createSemesterRegistrationIntoDB,
