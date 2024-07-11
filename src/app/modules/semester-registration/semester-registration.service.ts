@@ -3,11 +3,11 @@ import AppError from '../../errors/AppError';
 import { AcademicSemester } from '../academic-semester/academic-semester.model';
 import { TSemesterRegistration } from './semester-registration.interface';
 import { SemesterRegistration } from './semester-registration.model';
+import QueryBuilder from '../../builder/QueryBuilder';
 
 const createSemesterRegistrationIntoDB = async (
     semesterRegistration: TSemesterRegistration
 ) => {
-
     // check if academic semester doesn't exist
     const isAcademicSemesterExist = await AcademicSemester.findById(
         semesterRegistration.academicSemester
@@ -23,20 +23,41 @@ const createSemesterRegistrationIntoDB = async (
     // check if semesterRegistration already exists
     const isSemesterRegistrationExist = await SemesterRegistration.findOne({
         academicSemester: semesterRegistration.academicSemester,
-    })
+    });
 
-    if(isSemesterRegistrationExist) {
-        throw new AppError(httpStatus.CONFLICT, "This semester is already registered!");
+    if (isSemesterRegistrationExist) {
+        throw new AppError(
+            httpStatus.CONFLICT,
+            'This semester is already registered!'
+        );
     }
 
     return await SemesterRegistration.create(semesterRegistration);
 };
 
-const getAllSemesterRegistrationsFromDB = async (query: Record<string, unknown>) => {
+const getAllSemesterRegistrationsFromDB = async (
+    query: Record<string, unknown>
+) => {
+    const semesterRegistrationQuery = new QueryBuilder(
+        SemesterRegistration.find(),
+        query
+    )
+        .filter()
+        .sort()
+        .paginate()
+        .fields();
     
+    const result = await semesterRegistrationQuery.modelQuery.populate("academicSemester");
+
+    return result;
+};
+
+const getSemesterRegistrationByIdFromDB = async (id: string) => {
+    return await SemesterRegistration.findById(id);
 }
 
 export const SemesterRegistrationService = {
     createSemesterRegistrationIntoDB,
     getAllSemesterRegistrationsFromDB,
+    getSemesterRegistrationByIdFromDB,
 };

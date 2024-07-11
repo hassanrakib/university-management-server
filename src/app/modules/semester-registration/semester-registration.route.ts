@@ -16,5 +16,7 @@ router.post(
 
 router.get("/", SemesterRegistrationController.getAllSemesterRegistrations);
 
+router.get("/:id", SemesterRegistrationController.getSemesterRegistrationById);
+
 
 export const SemesterRegistrationRoutes = router;
