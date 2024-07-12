@@ -25,3 +25,9 @@ export interface TOfferedCourse {
     startTime: string;
     endTime: string;
 }
+
+export interface TSchedule {
+    days: Days[];
+    startTime: string;
+    endTime: string;
+}
