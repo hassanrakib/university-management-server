@@ -18,6 +18,11 @@ const adminSchema = new Schema<TAdmin>(
         },
         designation: { type: String, required: true },
         name: adminNameSchema,
+        email: {
+            type: String,
+            required: [true, 'Email is required'],
+            unique: true,
+        },
         gender: { type: String, enum: ['male', 'female'], required: true },
         dateOfBirth: { type: String },
         contactNo: { type: String, required: true },
@@ -25,11 +30,6 @@ const adminSchema = new Schema<TAdmin>(
         presentAddress: { type: String, required: true },
         permanentAddress: { type: String, required: true },
         profileImg: { type: String },
-        managementDepartment: {
-            type: Schema.Types.ObjectId,
-            ref: 'AcademicDepartment',
-            required: true,
-        },
         isDeleted: { type: Boolean, default: false },
     },
     {

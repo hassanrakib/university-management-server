@@ -136,15 +136,6 @@ const insertFacultyToDB = async (password: string, facultyData: TFaculty) => {
 };
 
 const insertAdminToDB = async (password: string, adminData: TAdmin) => {
-    const isAcademicDepartmentExist = await Faculty.findById(
-        adminData.managementDepartment
-    );
-    if (!isAcademicDepartmentExist) {
-        throw new AppError(
-            httpStatus.BAD_REQUEST,
-            'Academic department does not exist!'
-        );
-    }
 
     const session = await mongoose.startSession();
     try {

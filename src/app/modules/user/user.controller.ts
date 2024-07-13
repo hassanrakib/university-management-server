@@ -37,11 +37,11 @@ const createFaculty = catchAsync(async (req, res, next) => {
     });
 });
 
-const createAdmin = catchAsync(async (req, res, next) => {
+const createAdmin = catchAsync(async (req, res) => {
     const { password, admin: adminData } = req.body;
 
     // send req to the service
-    const insertedAdmin = UserServices.insertAdminToDB(password, adminData);
+    const insertedAdmin = await UserServices.insertAdminToDB(password, adminData);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,

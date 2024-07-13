@@ -11,6 +11,7 @@ export default interface TAdmin {
     user: Types.ObjectId;
     designation: string;
     name: TAdminName;
+    email: string;
     gender: 'male' | 'female';
     dateOfBirth?: string;
     contactNo: string;
@@ -18,6 +19,5 @@ export default interface TAdmin {
     presentAddress: string;
     permanentAddress: string;
     profileImg?: string;
-    managementDepartment: Types.ObjectId;
     isDeleted?: boolean;
 }

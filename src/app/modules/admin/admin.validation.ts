@@ -14,6 +14,7 @@ const createAdminSchema = z.object({
                 .string()
                 .min(1, { message: 'Designation is required' }),
             name: createAdminNameSchema,
+            email: z.string().email(),
             gender: z.enum(['male', 'female'], {
                 required_error: 'Gender is required',
             }),
@@ -31,9 +32,6 @@ const createAdminSchema = z.object({
                 .string()
                 .min(1, { message: 'Permanent address is required' }),
             profileImg: z.string().optional(),
-            managementDepartment: z
-                .string()
-                .min(1, { message: 'Academic department is required' }),
             isDeleted: z.boolean().default(false),
         }),
     }),
