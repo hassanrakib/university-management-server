@@ -25,4 +25,6 @@ router.patch(
     SemesterRegistrationController.updateSemesterRegistration
 );
 
+router.delete("/:id", SemesterRegistrationController.deleteSemesterRegistrationById);
+
 export const SemesterRegistrationRoutes = router;
