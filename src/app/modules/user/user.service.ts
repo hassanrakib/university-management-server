@@ -4,7 +4,7 @@ import AppError from '../../errors/AppError';
 import { AcademicSemester } from '../academic-semester/academic-semester.model';
 import TStudent from '../student/student.interface';
 import { Student } from '../student/student.model';
-import TUser from './user.interface';
+import {TUser} from './user.interface';
 import { User } from './user.model';
 import {
     generateAdminId,
