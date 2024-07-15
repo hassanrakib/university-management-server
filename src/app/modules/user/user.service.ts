@@ -73,8 +73,8 @@ async function insertStudentToDb(password: string, studentData: TStudent) {
     } catch (error) {
         await session.abortTransaction();
         await session.endSession();
-
-        throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, 'Failed to save!');
+        
+        throw error;
     }
 }
 

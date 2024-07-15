@@ -4,6 +4,7 @@ import httpStatus from 'http-status';
 import catchAsync from '../../utils/catch-async';
 
 const createStudent = catchAsync(async (req, res, next) => {
+    
     const { password, student: studentData } = req.body;
 
     // send req to the services
