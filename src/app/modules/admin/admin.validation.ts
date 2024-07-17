@@ -59,6 +59,7 @@ const updateAdminSchema = z.object({
                     .min(1, { message: 'Designation is required' })
                     .optional(),
                 name: updateAdminNameSchema.optional(),
+                email: z.string().email(),
                 gender: z
                     .enum(['male', 'female'], {
                         required_error: 'Gender is required',

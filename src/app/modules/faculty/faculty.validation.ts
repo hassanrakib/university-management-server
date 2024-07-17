@@ -14,6 +14,7 @@ const createFacultySchema = z.object({
                 .string()
                 .min(1, { message: 'Designation is required' }),
             name: createFacultyNameSchema,
+            email: z.string().email(),
             gender: z.enum(['male', 'female'], {
                 required_error: 'Gender is required',
             }),
@@ -31,9 +32,6 @@ const createFacultySchema = z.object({
                 .string()
                 .min(1, { message: 'Permanent address is required' }),
             profileImg: z.string().optional(),
-            academicFaculty: z
-                .string()
-                .min(1, { message: 'Academic faculty is required' }),
             academicDepartment: z
                 .string()
                 .min(1, { message: 'Academic department is required' }),
@@ -66,6 +64,7 @@ const updateFacultySchema = z.object({
                     .min(1, { message: 'Designation is required' })
                     .optional(),
                 name: updateFacultyNameSchema.optional(),
+                email: z.string().email().optional(),
                 gender: z
                     .enum(['male', 'female'], {
                         required_error: 'Gender is required',
@@ -89,10 +88,6 @@ const updateFacultySchema = z.object({
                     .min(1, { message: 'Permanent address is required' })
                     .optional(),
                 profileImg: z.string().optional(),
-                academicFaculty: z
-                    .string()
-                    .min(1, { message: 'Academic faculty is required' })
-                    .optional(), // Assuming ObjectId is a string, adjust if necessary
                 academicDepartment: z
                     .string()
                     .min(1, { message: 'Academic department is required' })

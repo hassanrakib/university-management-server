@@ -18,6 +18,11 @@ const facultySchema = new Schema<TFaculty>(
         },
         designation: { type: String, required: true },
         name: facultyNameSchema,
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+        },
         gender: { type: String, enum: ['male', 'female'], required: true },
         dateOfBirth: { type: String },
         contactNo: { type: String, required: true },
@@ -25,11 +30,6 @@ const facultySchema = new Schema<TFaculty>(
         presentAddress: { type: String, required: true },
         permanentAddress: { type: String, required: true },
         profileImg: { type: String },
-        academicFaculty: {
-            type: Schema.Types.ObjectId,
-            ref: 'AcademicFaculty',
-            required: true,
-        },
         academicDepartment: {
             type: Schema.Types.ObjectId,
             ref: 'AcademicDepartment',

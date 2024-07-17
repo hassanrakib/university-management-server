@@ -11,6 +11,7 @@ export default interface TFaculty {
     user: Types.ObjectId;
     designation: string;
     name: TFacultyName;
+    email: string;
     gender: 'male' | 'female';
     dateOfBirth?: string;
     contactNo: string;
@@ -18,7 +19,6 @@ export default interface TFaculty {
     presentAddress: string;
     permanentAddress: string;
     profileImg?: string;
-    academicFaculty: Types.ObjectId;
     academicDepartment: Types.ObjectId;
     isDeleted?: boolean;
 }

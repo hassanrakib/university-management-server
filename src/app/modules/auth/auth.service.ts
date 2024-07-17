@@ -5,6 +5,7 @@ import { TLoginCredentials } from './auth.interface';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import config from '../../config';
 import bcrypt from 'bcrypt';
+import { createToken } from './auth.utils';
 
 const loginUser = async (loginCredentials: TLoginCredentials) => {
     // check if user doesn't exist in the database
@@ -35,15 +36,25 @@ const loginUser = async (loginCredentials: TLoginCredentials) => {
 
     // Access Granted: Send Access Token, Refresh Token
 
-    // create token and send to the client
-    const accessToken = jwt.sign(
-        { userId: user.id, role: user.role },
+    const jwtPayload = { userId: user.id, role: user.role };
+
+    // create access token and send to the client
+    const accessToken = createToken(
+        jwtPayload,
         config.jwt_access_secret as string,
-        { expiresIn: '10d' }
+        config.jwt_access_expires_in as string
+    );
+
+    // create refresh token and send to the client
+    const refreshToken = createToken(
+        jwtPayload,
+        config.jwt_refresh_secret as string,
+        config.jwt_refresh_expires_in as string,
     );
 
     return {
         accessToken,
+        refreshToken,
         needsPasswordChange: user.needsPasswordChange,
     };
 };
