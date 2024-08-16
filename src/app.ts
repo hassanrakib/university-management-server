@@ -4,12 +4,14 @@ import globalError from './app/middlewares/global-error';
 import notFound from './app/middlewares/not-found';
 import { router } from './app/routes';
 import httpStatus from 'http-status';
+import cookieParser from 'cookie-parser';
 
 const app: Application = express();
 
 // middlewares
 app.use(express.json());
 app.use(cors());
+app.use(cookieParser());
 
 app.get('/', async (req: Request, res: Response) => {
     // following code produces unhandledRejection
