@@ -1,3 +1,4 @@
+import { string } from 'joi';
 import { z } from 'zod';
 
 const loginCredentialsSchema = z.object({
@@ -17,13 +18,22 @@ const changePasswordSchema = z.object({
 const refreshTokenSchema = z.object({
     cookies: z.object({
         refreshToken: z.string({
-            required_error: "Refresh token is required!",
-        })
-    })
-})
+            required_error: 'Refresh token is required!',
+        }),
+    }),
+});
+
+const forgetPasswordSchema = z.object({
+    body: z.object({
+        id: z.string({
+            required_error: 'User id is required!',
+        }),
+    }),
+});
 
 export const AuthValidation = {
     loginCredentialsSchema,
     changePasswordSchema,
     refreshTokenSchema,
+    forgetPasswordSchema,
 };
