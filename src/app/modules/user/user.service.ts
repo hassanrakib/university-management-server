@@ -40,6 +40,7 @@ async function insertStudentToDb(password: string, studentData: TStudent) {
 
         const user: TUser = {
             id,
+            email: studentData.email,
             password: password || (config.default_password as string),
             role: 'student',
         };
@@ -98,6 +99,7 @@ const insertFacultyToDB = async (password: string, facultyData: TFaculty) => {
 
         const user: TUser = {
             id,
+            email: facultyData.email,
             password: password || (config.default_password as string),
             role: 'faculty',
         };
@@ -145,6 +147,7 @@ const insertAdminToDB = async (password: string, adminData: TAdmin) => {
 
         const user: TUser = {
             id,
+            email: adminData.email,
             password: password || (config.default_password as string),
             role: 'admin',
         };

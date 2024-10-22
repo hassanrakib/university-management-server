@@ -6,6 +6,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import config from '../../config';
 import bcrypt from 'bcrypt';
 import { createToken } from './auth.utils';
+import { sendEmail } from '../../utils/sendEmail';
 
 const loginUser = async (loginCredentials: TLoginCredentials) => {
     // check if user doesn't exist in the database
@@ -101,7 +102,6 @@ const changePassword = async (
 };
 
 const refreshToken = async (token: string) => {
-   
     // verify token using jwt
     const decoded = jwt.verify(
         token,
@@ -146,7 +146,7 @@ const refreshToken = async (token: string) => {
         config.jwt_access_expires_in as string
     );
 
-    return {accessToken};
+    return { accessToken };
 };
 
 const forgetPassword = async (id: string) => {
@@ -169,16 +169,90 @@ const forgetPassword = async (id: string) => {
     const jwtPayload = { userId: user.id, role: user.role };
 
     // create access token and send to the client
-    const accessToken = createToken(
+    const resetToken = createToken(
         jwtPayload,
         config.jwt_access_secret as string,
-        config.jwt_access_expires_in as string
+        '10m'
     );
 
-    const resetUILink = `http://localhost:3000?id=${user.id}&token=${accessToken}`
+    const resetUILink = `${config.reset_pass_ui_link}?id=${user.id}&token=${resetToken}`;
 
-    return resetUILink;
-}
+    const emailTemplate = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reset Your Password</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      text-align: center;
+      padding: 10px 0;
+    }
+    .header h1 {
+      margin: 0;
+      color: #007BFF;
+    }
+    .content {
+      padding: 20px;
+    }
+    .content p {
+      margin: 10px 0;
+    }
+    .button {
+      display: inline-block;
+      padding: 10px 20px;
+      margin-top: 20px;
+      background-color: #007BFF;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      text-align: center;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      color: #777;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Reset Your Password</h1>
+    </div>
+    <div class="content">
+      <p>Hello ${user.role},</p>
+      <p>We received a request to reset your password. Click the button below to reset it:</p>
+      <a href=${resetUILink} class="button">Reset Password</a>
+      <p>If you did not request a password reset, please ignore this email or contact support if you have questions.</p>
+      <p>Thanks,<br>The University Management Server Team</p>
+    </div>
+    <div class="footer">
+      <p>&copy; 2024 University Management Server. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
+`;
+
+    sendEmail(user.email, emailTemplate);
+};
 
 export const AuthServices = {
     loginUser,
