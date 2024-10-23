@@ -1,10 +1,11 @@
 import httpStatus from 'http-status';
 import AppError from '../errors/AppError';
 import catchAsync from '../utils/catch-async';
-import jwt, { Jwt, JwtPayload } from 'jsonwebtoken';
+import { JwtPayload } from 'jsonwebtoken';
 import config from '../config';
 import { TUserRole } from '../modules/user/user.interface';
 import { User } from '../modules/user/user.model';
+import { verifyToken } from '../modules/auth/auth.utils';
 
 declare global {
     namespace Express {
@@ -24,10 +25,7 @@ const auth = (...userRoles: TUserRole[]) => {
         }
 
         // verify token using jwt
-        const decoded = jwt.verify(
-            token,
-            config.jwt_access_secret as string
-        ) as JwtPayload;
+        const decoded = verifyToken(token, config.jwt_access_secret as string);
 
         // check if user doesn't exist in the database
         const user = await User.isUserExistByCustomId(decoded.userId);

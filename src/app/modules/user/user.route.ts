@@ -30,4 +30,11 @@ router.post(
     UserController.createAdmin
 );
 
+// get me only using token
+router.get(
+    '/me',
+    auth(USER_ROLE.admin, USER_ROLE.faculty, USER_ROLE.student),
+    UserController.getMe
+);
+
 export const UserRoutes = router;

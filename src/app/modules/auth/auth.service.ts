@@ -5,7 +5,7 @@ import { TLoginCredentials } from './auth.interface';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import config from '../../config';
 import bcrypt from 'bcrypt';
-import { createToken } from './auth.utils';
+import { createToken, verifyToken } from './auth.utils';
 import { sendEmail } from '../../utils/sendEmail';
 
 const loginUser = async (loginCredentials: TLoginCredentials) => {
@@ -103,10 +103,7 @@ const changePassword = async (
 
 const refreshToken = async (token: string) => {
     // verify token using jwt
-    const decoded = jwt.verify(
-        token,
-        config.jwt_refresh_secret as string
-    ) as JwtPayload;
+    const decoded = verifyToken(token, config.jwt_refresh_secret as string);
 
     // check if user doesn't exist in the database
     const user = await User.isUserExistByCustomId(decoded.userId);

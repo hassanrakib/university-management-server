@@ -52,8 +52,20 @@ const createAdmin = catchAsync(async (req, res) => {
     });
 });
 
+// get me only using token
+const getMe = catchAsync(async (req, res) => {
+    const user = await UserServices.getMeFromDB(req.user);
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'User retrieved successfully',
+        data: user,
+    });
+})
+
 export const UserController = {
     createStudent,
     createFaculty,
     createAdmin,
+    getMe,
 };

@@ -4,7 +4,7 @@ import AppError from '../../errors/AppError';
 import { AcademicSemester } from '../academic-semester/academic-semester.model';
 import TStudent from '../student/student.interface';
 import { Student } from '../student/student.model';
-import {TUser} from './user.interface';
+import { TUser } from './user.interface';
 import { User } from './user.model';
 import {
     generateAdminId,
@@ -17,6 +17,8 @@ import { Faculty } from '../faculty/faculty.model';
 import TAdmin from '../admin/admin.interface';
 import { Admin } from '../admin/admin.model';
 import { AcademicDepartment } from '../academic-department/academic-department.model';
+import { JwtPayload } from 'jsonwebtoken';
+import { USER_ROLE } from './user.constant';
 
 async function insertStudentToDb(password: string, studentData: TStudent) {
     // find academic semester by its id given in the studentData.admissionSemester
@@ -74,7 +76,7 @@ async function insertStudentToDb(password: string, studentData: TStudent) {
     } catch (error) {
         await session.abortTransaction();
         await session.endSession();
-        
+
         throw error;
     }
 }
@@ -138,7 +140,6 @@ const insertFacultyToDB = async (password: string, facultyData: TFaculty) => {
 };
 
 const insertAdminToDB = async (password: string, adminData: TAdmin) => {
-
     const session = await mongoose.startSession();
     try {
         session.startTransaction();
@@ -182,8 +183,22 @@ const insertAdminToDB = async (password: string, adminData: TAdmin) => {
     }
 };
 
+// get me only using token
+const getMeFromDB = async (user: JwtPayload) => {
+    if (user.role === USER_ROLE.admin) {
+        return Admin.findOne({ id: user.userId });
+    }
+    if (user.role === USER_ROLE.faculty) {
+        return Faculty.findOne({ id: user.userId });
+    }
+    if (user.role === USER_ROLE.student) {
+        return Student.findOne({ id: user.userId });
+    }
+};
+
 export const UserServices = {
     insertStudentToDb,
     insertFacultyToDB,
     insertAdminToDB,
+    getMeFromDB,
 };
