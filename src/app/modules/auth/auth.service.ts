@@ -251,7 +251,55 @@ const forgetPassword = async (id: string) => {
 </html>
 `;
 
-    sendEmail(user.email, emailTemplate);
+    // sendEmail(user.email, emailTemplate);
+    console.log(resetUILink);
+};
+
+const resetPassword = async (
+    { id, newPassword }: { id: string; newPassword: string },
+    token: string
+) => {
+    // check if user doesn't exist in the database
+    const user = await User.isUserExistByCustomId(id);
+
+    if (!user) {
+        throw new AppError(httpStatus.NOT_FOUND, 'The user is not found!');
+    }
+
+    // checking if the user is deleted
+    if (user.isDeleted) {
+        throw new AppError(httpStatus.FORBIDDEN, 'The user is deleted!');
+    }
+    // check if user status is "blocked"
+    if (user.status === 'blocked') {
+        throw new AppError(httpStatus.FORBIDDEN, 'The user is blocked!');
+    }
+
+    // verify the token
+    const decoded = jwt.verify(
+        token,
+        config.jwt_access_secret as string
+    ) as JwtPayload;
+
+    // check the decoded userId and id sent through the body are same
+    if(id !== decoded.userId) {
+        throw new AppError(httpStatus.FORBIDDEN, "You are not allowed to reset the password!");
+    }
+
+    // hash the new password before replacing
+    const newHashedPassword = await bcrypt.hash(
+        newPassword,
+        Number(config.bcrypt_salt_rounds)
+    );
+
+    // update password in the db
+    await User.updateOne(
+        { id: user.id },
+        {
+            password: newHashedPassword,
+            passwordChangedAt: new Date(),
+        }
+    );
 };
 
 export const AuthServices = {
@@ -259,4 +307,5 @@ export const AuthServices = {
     changePassword,
     refreshToken,
     forgetPassword,
+    resetPassword,
 };
