@@ -4,7 +4,6 @@ import httpStatus from 'http-status';
 import catchAsync from '../../utils/catch-async';
 
 const createStudent = catchAsync(async (req, res, next) => {
-    
     const { password, student: studentData } = req.body;
 
     // send req to the services
@@ -42,7 +41,10 @@ const createAdmin = catchAsync(async (req, res) => {
     const { password, admin: adminData } = req.body;
 
     // send req to the service
-    const insertedAdmin = await UserServices.insertAdminToDB(password, adminData);
+    const insertedAdmin = await UserServices.insertAdminToDB(
+        password,
+        adminData
+    );
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -61,11 +63,25 @@ const getMe = catchAsync(async (req, res) => {
         message: 'User retrieved successfully',
         data: user,
     });
-})
+});
+
+const changeUserStatus = catchAsync(async (req, res) => {
+    const id = req.params.id;
+    const { status } = req.body;
+    const updatedUser = await UserServices.changeUserStatusIntoDB(id, status);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'User status updated successfully',
+        data: updatedUser,
+    });
+});
 
 export const UserController = {
     createStudent,
     createFaculty,
     createAdmin,
     getMe,
+    changeUserStatus,
 };

@@ -186,14 +186,25 @@ const insertAdminToDB = async (password: string, adminData: TAdmin) => {
 // get me only using token
 const getMeFromDB = async (user: JwtPayload) => {
     if (user.role === USER_ROLE.admin) {
-        return Admin.findOne({ id: user.userId });
+        return Admin.findOne({ id: user.userId }).populate('user');
     }
     if (user.role === USER_ROLE.faculty) {
-        return Faculty.findOne({ id: user.userId });
+        return Faculty.findOne({ id: user.userId }).populate('user');
     }
     if (user.role === USER_ROLE.student) {
-        return Student.findOne({ id: user.userId });
+        return Student.findOne({ id: user.userId }).populate('user');
     }
+};
+
+const changeUserStatusIntoDB = async (id: string, status: string) => {
+    return await User.findOneAndUpdate(
+        { id },
+        { status },
+        {
+            new: true,
+            runValidators: true,
+        }
+    );
 };
 
 export const UserServices = {
@@ -201,4 +212,5 @@ export const UserServices = {
     insertFacultyToDB,
     insertAdminToDB,
     getMeFromDB,
+    changeUserStatusIntoDB,
 };
