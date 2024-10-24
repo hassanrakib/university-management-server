@@ -19,8 +19,13 @@ import { Admin } from '../admin/admin.model';
 import { AcademicDepartment } from '../academic-department/academic-department.model';
 import { JwtPayload } from 'jsonwebtoken';
 import { USER_ROLE } from './user.constant';
+import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary';
 
-async function insertStudentToDb(password: string, studentData: TStudent) {
+async function insertStudentToDb(
+    password: string,
+    studentData: TStudent,
+    file: Express.Multer.File
+) {
     // find academic semester by its id given in the studentData.admissionSemester
     const academicSemester = await AcademicSemester.findById(
         studentData.admissionSemester
@@ -47,6 +52,13 @@ async function insertStudentToDb(password: string, studentData: TStudent) {
             role: 'student',
         };
 
+        // save profile image to cloudinary and get the url & secure_url
+        const imageName = `${studentData.name.firstName}_${studentData.name.lastName}_${id}`;
+        const profile_img_url = await sendImageToCloudinary(
+            imageName.toLowerCase(),
+            file.path
+        );
+
         // create user
         const newUser = await User.create([user], { session });
 
@@ -59,6 +71,7 @@ async function insertStudentToDb(password: string, studentData: TStudent) {
             ...studentData,
             id: newUser[0].id,
             user: newUser[0]._id,
+            profileImg: profile_img_url,
         };
 
         const newStudent = await Student.create([student], { session });

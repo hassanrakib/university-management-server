@@ -18,6 +18,6 @@ export default interface TAdmin {
     emergencyContactNo: string;
     presentAddress: string;
     permanentAddress: string;
-    profileImg?: string;
+    profileImg: string;
     isDeleted?: boolean;
 }

@@ -141,7 +141,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
             type: localGuardianSchema,
             required: [true, 'student.localGuardian is required'],
         },
-        profileImg: { type: String },
+        profileImg: { type: String, required: true },
         admissionSemester: {
             type: Schema.Types.ObjectId,
             required: true,

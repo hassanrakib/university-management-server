@@ -8,7 +8,7 @@ const createAdminNameSchema = z.object({
 
 const createAdminSchema = z.object({
     body: z.object({
-        password: z.string(),
+        password: z.string().optional(),
         admin: z.object({
             designation: z
                 .string()
@@ -31,7 +31,6 @@ const createAdminSchema = z.object({
             permanentAddress: z
                 .string()
                 .min(1, { message: 'Permanent address is required' }),
-            profileImg: z.string().optional(),
             isDeleted: z.boolean().default(false),
         }),
     }),

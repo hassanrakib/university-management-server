@@ -18,7 +18,7 @@ export default interface TFaculty {
     emergencyContactNo: string;
     presentAddress: string;
     permanentAddress: string;
-    profileImg?: string;
+    profileImg: string;
     academicDepartment: Types.ObjectId;
     isDeleted?: boolean;
 }

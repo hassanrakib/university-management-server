@@ -47,7 +47,7 @@ export default interface TStudent {
     permanentAddress: string;
     guardian: TGuardian;
     localGuardian: TLocalGuardian;
-    profileImg?: string;
+    profileImg: string;
     admissionSemester: Types.ObjectId;
     academicDepartment: Types.ObjectId;
     isDeleted?: boolean;

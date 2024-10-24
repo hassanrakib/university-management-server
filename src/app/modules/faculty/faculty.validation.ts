@@ -31,7 +31,6 @@ const createFacultySchema = z.object({
             permanentAddress: z
                 .string()
                 .min(1, { message: 'Permanent address is required' }),
-            profileImg: z.string().optional(),
             academicDepartment: z
                 .string()
                 .min(1, { message: 'Academic department is required' }),

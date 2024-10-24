@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import { UserController } from './user.controller';
 import { studentValidations } from '../student/student.validation';
 import validateRequest from '../../middlewares/validate-request';
@@ -7,12 +7,19 @@ import { AdminValidations } from '../admin/admin.validation';
 import auth from '../../middlewares/auth';
 import { USER_ROLE } from './user.constant';
 import { UserValidations } from './user.validation';
+import { upload } from '../../utils/sendImageToCloudinary';
 
 const router = express.Router();
 
 router.post(
     '/create-student',
     auth(USER_ROLE.admin),
+    upload.single('file'),
+    (req: Request, res: Response, next: NextFunction) => {
+        // attach data from req.body.data (as it is coming from form data) to req.body
+        req.body = JSON.parse(req.body.data);
+        next();
+    },
     validateRequest(studentValidations.CreateStudentSchema),
     UserController.createStudent
 );
