@@ -26,7 +26,7 @@ export interface TEnrolledCourse {
     student: Types.ObjectId;
     faculty: Types.ObjectId;
     isEnrolled?: boolean;
-    courseMarks?: TEnrolledCourseMarks;
+    courseMarks: TEnrolledCourseMarks;
     grade?: Grade;
     gradePoints?: number;
     isCompleted?: boolean;
