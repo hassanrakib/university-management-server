@@ -14,4 +14,11 @@ router.post(
     EnrolledCourseControllers.createEnrolledCourse
 );
 
+router.patch(
+    '/update-enrolled-course-marks',
+    auth(USER_ROLE.faculty),
+    validateRequest(EnrolledCourseValidations.updateEnrolledCourseMarksSchema),
+    EnrolledCourseControllers.updateEnrolledCourseMarks
+);
+
 export const EnrolledCourseRoutes = router;

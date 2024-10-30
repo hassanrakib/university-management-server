@@ -77,7 +77,7 @@ const enrolledCourseSchema = new Schema<TEnrolledCourse>({
     },
     isEnrolled: {
         type: Boolean,
-        default: false,
+        default: true,
     },
     courseMarks: {
         type: courseMarksSchema,
