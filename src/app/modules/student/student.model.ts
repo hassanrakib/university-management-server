@@ -179,9 +179,9 @@ studentSchema.statics.isStudentExist = async function (id: string) {
     return await Student.findOne({ id });
 };
 
-studentSchema.pre('findOne', function (next) {
+studentSchema.pre('find', function (next) {
     // filter out the document that is deleted
-    this.findOne({ isDeleted: { $ne: true } });
+    this.find({ isDeleted: { $ne: true } });
     next();
 });
 

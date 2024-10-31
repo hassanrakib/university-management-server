@@ -89,7 +89,10 @@ async function getAllStudents(query: Record<string, unknown>) {
                 path: 'academicFaculty',
             },
         });
-    return result;
+
+    const meta = await studentQuery.countTotal();
+
+    return { meta, result };
 }
 
 async function updateAStudentById(

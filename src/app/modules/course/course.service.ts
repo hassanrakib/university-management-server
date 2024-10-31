@@ -22,7 +22,9 @@ const fetchCoursesFromDB = async (query: Record<string, unknown>) => {
         'preRequisiteCourses.course'
     );
 
-    return result;
+    const meta = await courseQuery.countTotal();
+
+    return {meta, result};
 };
 
 const fetchCourseByIdFromDB = async (courseId: string) => {
