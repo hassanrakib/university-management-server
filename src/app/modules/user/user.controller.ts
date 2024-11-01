@@ -6,18 +6,13 @@ import AppError from '../../errors/AppError';
 
 const createStudent = catchAsync(async (req, res, next) => {
 
-    // make profile image compulsory
-    if(!req.file) {
-        throw new AppError(httpStatus.BAD_REQUEST, 'Profile image is required!');
-    }
-
     const { password, student: studentData } = req.body;
 
     // send req to the services
     const insertedStudent = await UserServices.insertStudentToDb(
         password,
         studentData,
-        req.file as Express.Multer.File
+        req.file
     );
 
     sendResponse(res, {

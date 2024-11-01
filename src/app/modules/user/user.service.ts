@@ -24,7 +24,7 @@ import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary';
 async function insertStudentToDb(
     password: string,
     studentData: TStudent,
-    file: Express.Multer.File
+    file: Express.Multer.File | undefined
 ) {
     // find academic semester by its id given in the studentData.admissionSemester
     const academicSemester = await AcademicSemester.findById(
@@ -35,6 +35,17 @@ async function insertStudentToDb(
         throw new AppError(
             httpStatus.BAD_REQUEST,
             'Academic Semester not found!'
+        );
+
+    // find academic department by its id
+    const academicDepartment = await AcademicDepartment.findById(
+        studentData.academicDepartment
+    );
+
+    if (!academicDepartment)
+        throw new AppError(
+            httpStatus.BAD_REQUEST,
+            'Academic Department not found!'
         );
 
     // create a mongoose session for transaction
@@ -54,10 +65,9 @@ async function insertStudentToDb(
 
         // save profile image to cloudinary and get the url & secure_url
         const imageName = `${studentData.name.firstName}_${studentData.name.lastName}_${id}`;
-        const profile_img_url = await sendImageToCloudinary(
-            imageName.toLowerCase(),
-            file.path
-        );
+        const profile_img_url = file
+            ? await sendImageToCloudinary(imageName.toLowerCase(), file.path)
+            : 'https://www.gravatar.com/avatar/?d=identicon';
 
         // create user
         const newUser = await User.create([user], { session });
@@ -67,11 +77,12 @@ async function insertStudentToDb(
             throw new AppError(httpStatus.BAD_REQUEST, 'user creation failed!');
         }
 
-        const student = {
+        const student: TStudent = {
             ...studentData,
             id: newUser[0].id,
             user: newUser[0]._id,
             profileImg: profile_img_url,
+            academicFaculty: academicDepartment.academicFaculty,
         };
 
         const newStudent = await Student.create([student], { session });
