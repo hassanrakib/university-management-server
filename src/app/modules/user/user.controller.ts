@@ -2,7 +2,6 @@ import { UserServices } from './user.service';
 import sendResponse from '../../utils/send-response';
 import httpStatus from 'http-status';
 import catchAsync from '../../utils/catch-async';
-import AppError from '../../errors/AppError';
 
 const createStudent = catchAsync(async (req, res, next) => {
 
@@ -29,7 +28,8 @@ const createFaculty = catchAsync(async (req, res, next) => {
     // send req to the service
     const insertedFaculty = await UserServices.insertFacultyToDB(
         password,
-        facultyData
+        facultyData,
+        req.file,
     );
 
     sendResponse(res, {
@@ -46,7 +46,8 @@ const createAdmin = catchAsync(async (req, res) => {
     // send req to the service
     const insertedAdmin = await UserServices.insertAdminToDB(
         password,
-        adminData
+        adminData,
+        req.file
     );
 
     sendResponse(res, {

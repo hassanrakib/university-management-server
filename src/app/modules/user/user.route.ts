@@ -26,14 +26,26 @@ router.post(
 
 router.post(
     '/create-faculty',
-    auth(USER_ROLE.admin),
+    auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+    upload.single('file'),
+    (req: Request, res: Response, next: NextFunction) => {
+        // attach data from req.body.data (as it is coming from form data) to req.body
+        req.body = JSON.parse(req.body.data);
+        next();
+    },
     validateRequest(FacultyValidations.createFacultySchema),
     UserController.createFaculty
 );
 
 router.post(
     '/create-admin',
-    auth(USER_ROLE.superAdmin),
+    auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+    upload.single('file'),
+    (req: Request, res: Response, next: NextFunction) => {
+        // attach data from req.body.data (as it is coming from form data) to req.body
+        req.body = JSON.parse(req.body.data);
+        next();
+    },
     validateRequest(AdminValidations.createAdminSchema),
     UserController.createAdmin
 );
@@ -41,13 +53,18 @@ router.post(
 // get me only using token
 router.get(
     '/me',
-    auth(USER_ROLE.admin, USER_ROLE.faculty, USER_ROLE.student),
+    auth(
+        USER_ROLE.admin,
+        USER_ROLE.superAdmin,
+        USER_ROLE.faculty,
+        USER_ROLE.student
+    ),
     UserController.getMe
 );
 
 router.put(
     '/change-status/:id',
-    auth(USER_ROLE.admin),
+    auth(USER_ROLE.admin, USER_ROLE.superAdmin),
     validateRequest(UserValidations.updateUserStatusSchema),
     UserController.changeUserStatus
 );

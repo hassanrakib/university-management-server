@@ -4,7 +4,6 @@ import sendResponse from '../../utils/send-response';
 import { FacultyService } from './faculty.service';
 
 const getAllFaculties = catchAsync(async (req, res, next) => {
-
     console.log(req.cookies);
 
     const faculties = await FacultyService.fetchFacultiesFromDB(req.query);
@@ -44,8 +43,20 @@ const updateFacultyById = catchAsync(async (req, res, next) => {
     });
 });
 
+const deleteFacultyById = catchAsync(async (req, res) => {
+    const result = await FacultyService.deleteFacultyByIdFromDB(req.params.facultyId);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Faculty is deleted succesfully',
+        data: result,
+    });
+});
+
 export const FacultyController = {
     getAllFaculties,
     getFacultyById,
     updateFacultyById,
+    deleteFacultyById,
 };

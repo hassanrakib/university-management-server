@@ -105,7 +105,11 @@ async function insertStudentToDb(
     }
 }
 
-const insertFacultyToDB = async (password: string, facultyData: TFaculty) => {
+const insertFacultyToDB = async (
+    password: string,
+    facultyData: TFaculty,
+    file: Express.Multer.File | undefined
+) => {
     const isAcademicDepartmentExist = await AcademicDepartment.findById(
         facultyData.academicDepartment
     );
@@ -123,6 +127,12 @@ const insertFacultyToDB = async (password: string, facultyData: TFaculty) => {
 
         const id = await generateFacultyId();
 
+        // save profile image to cloudinary and get the url & secure_url
+        const imageName = `${facultyData.name.firstName}_${facultyData.name.lastName}_${id}`;
+        const profile_img_url = file
+            ? await sendImageToCloudinary(imageName.toLowerCase(), file.path)
+            : 'https://www.gravatar.com/avatar/?d=identicon';
+
         const user: TUser = {
             id,
             email: facultyData.email,
@@ -136,10 +146,12 @@ const insertFacultyToDB = async (password: string, facultyData: TFaculty) => {
             throw new AppError(httpStatus.BAD_REQUEST, 'User creation failed');
         }
 
-        const faculty = {
+        const faculty: TFaculty = {
             ...facultyData,
             id: newUser[0].id,
             user: newUser[0]._id,
+            profileImg: profile_img_url,
+            academicFaculty: isAcademicDepartmentExist.academicFaculty,
         };
 
         const newFaculty = await Faculty.create([faculty], { session });
@@ -163,12 +175,22 @@ const insertFacultyToDB = async (password: string, facultyData: TFaculty) => {
     }
 };
 
-const insertAdminToDB = async (password: string, adminData: TAdmin) => {
+const insertAdminToDB = async (
+    password: string,
+    adminData: TAdmin,
+    file: Express.Multer.File | undefined
+) => {
     const session = await mongoose.startSession();
     try {
         session.startTransaction();
 
         const id = await generateAdminId();
+
+        // save profile image to cloudinary and get the url & secure_url
+        const imageName = `${adminData.name.firstName}_${adminData.name.lastName}_${id}`;
+        const profile_img_url = file
+            ? await sendImageToCloudinary(imageName.toLowerCase(), file.path)
+            : 'https://www.gravatar.com/avatar/?d=identicon';
 
         const user: TUser = {
             id,
@@ -183,13 +205,14 @@ const insertAdminToDB = async (password: string, adminData: TAdmin) => {
             throw new AppError(httpStatus.BAD_REQUEST, 'User creation failed');
         }
 
-        const faculty = {
+        const admin: TAdmin = {
             ...adminData,
             id: newUser[0].id,
             user: newUser[0]._id,
+            profileImg: profile_img_url,
         };
 
-        const newAdmin = await Admin.create([faculty], { session });
+        const newAdmin = await Admin.create([admin], { session });
 
         if (!newAdmin.length) {
             throw new AppError(httpStatus.BAD_REQUEST, 'Admin creation failed');
