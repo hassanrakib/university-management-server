@@ -83,12 +83,7 @@ async function getAllStudents(query: Record<string, unknown>) {
     const result = await studentQuery.modelQuery
         .populate('user')
         .populate('admissionSemester')
-        .populate({
-            path: 'academicDepartment',
-            populate: {
-                path: 'academicFaculty',
-            },
-        });
+        .populate('academicDepartment academicFaculty')
 
     const meta = await studentQuery.countTotal();
 
