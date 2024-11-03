@@ -62,7 +62,7 @@ const insertEnrolledCourseIntoDB = async (
         offeredCourse.semesterRegistration
     ).select('maxCredit');
 
-    const totalCreditsOfThisSemesterForTheStudent: {
+    let totalCreditsOfThisSemesterForTheStudent: {
         totalEnrolledCredits: number;
     }[] = await EnrolledCourse.aggregate([
         {
@@ -91,12 +91,19 @@ const insertEnrolledCourseIntoDB = async (
         {
             $project: {
                 _id: 0,
-                totalEnrolledCredits: {
-                    $ifNull: ['$totalEnrolledCredits', 0],
-                },
+                totalEnrolledCredits: 1,
             },
         },
     ]);
+
+    // if the student doesn't have any enrolled course the following is going to return []
+    if (!totalCreditsOfThisSemesterForTheStudent.length) {
+        totalCreditsOfThisSemesterForTheStudent = [
+            {
+                totalEnrolledCredits: 0,
+            },
+        ];
+    }
 
     // get the course to get the credits
     const course = await Course.findById(offeredCourse.course).select(
@@ -212,20 +219,25 @@ const updateEnrolledCourseMarksIntoDB = async (
         offeredCourse,
         student,
         faculty: faculty._id,
-    })
+    });
 
-    if(!isCourseBelongToFaculty) {
+    if (!isCourseBelongToFaculty) {
         throw new AppError(httpStatus.FORBIDDEN, 'You are forbidden!');
     }
 
     // update the marks, grade, gradePoints & isCompleted
     const modifiedData: Record<string, unknown> = {};
 
-    if(courseMarks?.finalTerm) {
-        const {classTest1, classTest2, midTerm} = isCourseBelongToFaculty.courseMarks;
+    if (courseMarks?.finalTerm) {
+        const { classTest1, classTest2, midTerm } =
+            isCourseBelongToFaculty.courseMarks;
 
         // calculate total marks
-        const totalMarks = Math.ceil(classTest1 * 0.1) + Math.ceil(classTest2 * 0.1) + Math.ceil(midTerm * 0.3) + Math.ceil(courseMarks.finalTerm * 0.5);
+        const totalMarks =
+            Math.ceil(classTest1) +
+            Math.ceil(classTest2) +
+            Math.ceil(midTerm) +
+            Math.ceil(courseMarks.finalTerm);
 
         // calculate grade & grade points
         const result = calculateGradeAndPoints(totalMarks);
@@ -235,13 +247,17 @@ const updateEnrolledCourseMarksIntoDB = async (
         modifiedData.isCompleted = true;
     }
 
-    if(courseMarks && Object.keys(courseMarks).length) {
-        for(const [key, value] of Object.entries(courseMarks)) {
+    if (courseMarks && Object.keys(courseMarks).length) {
+        for (const [key, value] of Object.entries(courseMarks)) {
             modifiedData[`courseMarks.${key}`] = value;
         }
     }
 
-    const result = await EnrolledCourse.findByIdAndUpdate(isCourseBelongToFaculty._id, modifiedData, {new: true, runValidators: true});
+    const result = await EnrolledCourse.findByIdAndUpdate(
+        isCourseBelongToFaculty._id,
+        modifiedData,
+        { new: true, runValidators: true }
+    );
 
     return result;
 };
