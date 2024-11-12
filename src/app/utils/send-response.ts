@@ -5,6 +5,12 @@ interface ResponseData<T> {
     success: boolean;
     message: string;
     data: T;
+    meta?: {
+        totalDocuments: number;
+        page: number;
+        limit: number;
+        totalPage: number;
+    };
 }
 
 export default function <T>(res: Response, data: ResponseData<T>) {

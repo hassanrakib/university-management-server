@@ -4,6 +4,7 @@ import { TAcademicSemester } from './academic-semester.interface';
 import { AcademicSemester } from './academic-semester.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
+import QueryBuilder from '../../builder/QueryBuilder';
 
 const createAcademicSemesterIntoDB = async (
     academicSemester: TAcademicSemester
@@ -18,8 +19,20 @@ const createAcademicSemesterIntoDB = async (
     return await AcademicSemester.create(academicSemester);
 };
 
-const fetchAcademicSemestersFromDB = async () => {
-    return await AcademicSemester.find();
+const fetchAcademicSemestersFromDB = async (query: Record<string, unknown>) => {
+    const academicSemesterQuery = new QueryBuilder(
+        AcademicSemester.find(),
+        query
+    )
+        .filter()
+        .sort()
+        .paginate()
+        .fields();
+    
+    const result = await academicSemesterQuery.modelQuery;
+    const meta = await academicSemesterQuery.countTotal();
+
+    return {result, meta};
 };
 
 const fetchAcademicSemesterByIdFromDB = async (semesterId: string) => {
