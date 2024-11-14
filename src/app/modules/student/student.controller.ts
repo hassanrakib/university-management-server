@@ -20,7 +20,8 @@ const fetchAllStudentents = catchAsync(async (req, res, next) => {
         statusCode: httpStatus.OK,
         success: true,
         message: httpStatus[200],
-        data: studentsData,
+        data: studentsData.result,
+        meta: studentsData.meta,
     });
 });
 
